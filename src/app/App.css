@@ -1,0 +1,93 @@
+
+*{
+  font-family: 'Jost', 'Poppins', 'Roboto' sans-serif ;
+  line-height: 110%;
+}
+
+
+
+.logo {
+  height: 8em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #ffffff);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #00a2ff);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .logo.react {
+    animation: logo-spin infinite 8s linear;
+  }
+}
+
+.swiper-button-prev{
+  color: white !important
+}
+
+.swiper-button-next{
+  color: white !important;
+}
+
+.swiper-pagination-bullet{
+  background-color: #14F194 !important;
+}
+
+.swiper-pagination-bullet-active{
+  background-color: #14F194 !important;
+}
+ 
+
+.MuiOutlinedInput-notchedOutline{
+  border-color: #ffffff !important;
+}
+
+.MuiInputLabel-formControl{
+color: #FFF 
+!important;}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pulse-animation {
+  animation: pulse 1.5s infinite;
+}
+.ping-animation {
+  display: inline-block;
+  animation: ping 2s ease-in-out infinite;
+}
+
+@keyframes ping {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+ 
