@@ -1,26 +1,28 @@
 import { Box, IconButton, Paper, Typography } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigation } from '../../hooks/NavigationContext';
 import { LoggedUser, logout } from '../../services/authService';
+import { getStudents } from '../../services/userService';
 import { ExitToAppRounded } from '@mui/icons-material';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { Gauge } from '@mui/x-charts';
 import { SearchableTable } from '../../components/Table/table';
 const Menu = () => {
 	const { navigateTo } = useNavigation();
+	const [users, setUsers] = useState([]);
 
-	useEffect(() => {
+	useEffect( () => {
 		// Atualiza o LoggedUser sempre que o componente é carregado
-		async function fetchUserData() {
+		async function fetchStudents() {
 			try {
-				const user = LoggedUser.get();
-				console.log('Dados do usuário atualizados:', user);
+				var currentUsers = await getStudents()
+				setUsers(currentUsers)
 			} catch (error) {
 				console.error('Erro ao atualizar dados do usuário:', error);
 			}
 		}
-
-		fetchUserData();
+		
+		fetchStudents();
 	}, []);
 
 	return (
@@ -116,7 +118,7 @@ const Menu = () => {
 									alignItems: 'center',
 								}}
 							>
-								14
+								{users.length}
 							</Typography>
 						</ModuloMenu>
 						<ModuloMenu titulo={'Alunos Formados'}>
@@ -124,8 +126,8 @@ const Menu = () => {
 								series={[
 									{
 										data: [
-											{ id: 0, value: 10, label: 'series A' },
-											{ id: 1, value: 15, label: 'series B' },
+											{ id: 0, value:  users.filter(user => user.progress >= 21).length, label: 'Formados' },
+											{ id: 1, value: users.filter(user => user.progress < 21).length, label: 'Não formados' },
 										],
 									},
 								]}
@@ -134,7 +136,7 @@ const Menu = () => {
 							/>
 						</ModuloMenu>
 						<ModuloMenu titulo={'Alunos Pagos/Pendente'}>
-							<Gauge width={350} height={130} value={60} />
+							<Gauge width={350} height={130} value={(users.filter(user => user.isPaying).length/users.length * 100).toFixed(2) } />
 						</ModuloMenu>
 					</Box>
 					<Paper
@@ -151,7 +153,7 @@ const Menu = () => {
 							width: { xs: '100%', md: '90%' },
 						}}
 					>
-						<SearchableTable />
+					{ users.length != 0  && <SearchableTable users={users}/>}	
 					</Paper>
 				</Box>
 			</Box>

@@ -33,7 +33,7 @@ const Homepage = () => {
 		try {
 			if (isLogin) {
 				await loginWithEmailAndPassword(formData.email, formData.password);
-				if (LoggedUser.get()) {
+				if (LoggedUser.get() && LoggedUser.get().isAdmin == true) {
 					navigateTo('Menu');
 				} else {
 					setError('Usuário ou senha incorretos');

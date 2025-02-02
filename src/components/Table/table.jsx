@@ -13,52 +13,26 @@ import {
 	TablePagination,
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
+import {changePaymentStatus} from '../../services/userService';
 
-const mockUsers = [
-	{ id: 1, nome: 'João Silva', email: 'joao@gmail.com', numero: '123456789', pago: true, andamento: 'Concluído' },
-	{
-		id: 2,
-		nome: 'Maria Santos',
-		email: 'maria@gmail.com',
-		numero: '987654321',
-		pago: false,
-		andamento: 'Pendente',
-	},
-	{
-		id: 3,
-		nome: 'Carlos Souza',
-		email: 'carlos@gmail.com',
-		numero: '567890123',
-		pago: true,
-		andamento: 'Em Progresso',
-	},
-	{ id: 4, nome: 'Ana Oliveira', email: 'ana@gmail.com', numero: '678901234', pago: false, andamento: 'Pendente' },
-	{ id: 5, nome: 'Pedro Lima', email: 'pedro@gmail.com', numero: '234567890', pago: true, andamento: 'Concluído' },
-	{
-		id: 6,
-		nome: 'Julia Costa',
-		email: 'julia@gmail.com',
-		numero: '345678901',
-		pago: false,
-		andamento: 'Em Progresso',
-	},
-];
 
-export const SearchableTable = () => {
-	const [users, setUsers] = useState(mockUsers);
+export const SearchableTable = (initialUsers = []) => {
+	const [users, setUsers] = useState(initialUsers["users"]);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(4);
 
 	const handleSearch = () => {
-		const filteredUsers = mockUsers.filter(user =>
-			Object.values(user).some(value => String(value).toLowerCase().includes(searchQuery.toLowerCase())),
-		);
-		setUsers(filteredUsers);
+		// const filteredUsers = mockUsers.filter(user =>
+		// 	Object.values(user).some(value => String(value).toLowerCase().includes(searchQuery.toLowerCase())),
+		// );
+		// setUsers(filteredUsers);
 	};
 
-	const handlePagoToggle = id => {
-		setUsers(prevUsers => prevUsers.map(user => (user.id === id ? { ...user, pago: !user.pago } : user)));
+	const handlePagoToggle = user => {
+		changePaymentStatus(user);
+		console.log(users)
+		setUsers(users.map(u => (u.id === user.id ? { ...u, isPaying: !u.isPaying } : u)));
 	};
 
 	const handleChangePage = (event, newPage) => {
@@ -70,8 +44,9 @@ export const SearchableTable = () => {
 		setPage(0);
 	};
 
+	console.log(users)
 	const paginatedUsers = users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
+	console.log(Array.isArray(paginatedUsers));
 	return (
 		<Box sx={{ width: '100%', p: 2 }}>
 			<Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -113,17 +88,17 @@ export const SearchableTable = () => {
 					<TableBody>
 						{paginatedUsers.map(user => (
 							<TableRow key={user.id}>
-								<TableCell>{user.nome}</TableCell>
+								<TableCell>{user.name}</TableCell>
 								<TableCell>{user.email}</TableCell>
-								<TableCell>{user.numero}</TableCell>
+								<TableCell>{user.number}</TableCell>
 								<TableCell>
 									<Switch
-										checked={user.pago}
-										onChange={() => handlePagoToggle(user.id)}
+										checked={user.isPaying}
+										onChange={() => handlePagoToggle(user)}
 										color='primary'
 									/>
 								</TableCell>
-								<TableCell>{user.andamento}</TableCell>
+								<TableCell>{user.progress < 21 ? 'Concluído' : 'Em Progresso'}</TableCell>
 							</TableRow>
 						))}
 					</TableBody>
