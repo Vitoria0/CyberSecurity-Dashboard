@@ -13,25 +13,28 @@ import {
 	TablePagination,
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
-import {changePaymentStatus} from '../../services/userService';
-
+import { changePaymentStatus } from '../../services/userService';
 
 export const SearchableTable = (initialUsers = []) => {
-	const [users, setUsers] = useState(initialUsers["users"]);
+	const [users, setUsers] = useState(initialUsers['users']);
+	const [totalUsers, setTotalUsers] = useState(initialUsers['users']);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(4);
 
 	const handleSearch = () => {
-		// const filteredUsers = mockUsers.filter(user =>
-		// 	Object.values(user).some(value => String(value).toLowerCase().includes(searchQuery.toLowerCase())),
-		// );
-		// setUsers(filteredUsers);
+		const filteredUsers = totalUsers.filter(user => {
+			return Object.entries(user)
+				.filter(([key]) => key !== 'id') // Filtra para excluir o campo "id"
+				.some(([, value]) => String(value).toLowerCase().includes(searchQuery.toLowerCase()));
+		});
+		setPage(0);
+		setUsers(filteredUsers);
 	};
 
 	const handlePagoToggle = user => {
 		changePaymentStatus(user);
-		console.log(users)
+		console.log(users);
 		setUsers(users.map(u => (u.id === user.id ? { ...u, isPaying: !u.isPaying } : u)));
 	};
 
@@ -44,7 +47,7 @@ export const SearchableTable = (initialUsers = []) => {
 		setPage(0);
 	};
 
-	console.log(users)
+	console.log(users);
 	const paginatedUsers = users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 	console.log(Array.isArray(paginatedUsers));
 	return (
@@ -80,7 +83,6 @@ export const SearchableTable = (initialUsers = []) => {
 						<TableRow>
 							<TableCell>Nome</TableCell>
 							<TableCell>Email</TableCell>
-							<TableCell>Número</TableCell>
 							<TableCell>Pago</TableCell>
 							<TableCell>Andamento</TableCell>
 						</TableRow>
@@ -90,7 +92,7 @@ export const SearchableTable = (initialUsers = []) => {
 							<TableRow key={user.id}>
 								<TableCell>{user.name}</TableCell>
 								<TableCell>{user.email}</TableCell>
-								<TableCell>{user.number}</TableCell>
+
 								<TableCell>
 									<Switch
 										checked={user.isPaying}
@@ -98,7 +100,9 @@ export const SearchableTable = (initialUsers = []) => {
 										color='primary'
 									/>
 								</TableCell>
-								<TableCell>{user.progress < 21 ? 'Concluído' : 'Em Progresso'}</TableCell>
+								<TableCell>
+									{user.progress >= 21 ? 'Concluído' : 'Em Progresso'}
+								</TableCell>
 							</TableRow>
 						))}
 					</TableBody>
